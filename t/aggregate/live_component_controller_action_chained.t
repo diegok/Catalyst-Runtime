@@ -386,6 +386,19 @@ sub run_tests {
     }
 
     #
+    #   Tests if a more specific chained actions has priority over an more generic one
+    #   when both 'share' the path: /prio/*/*/*/* vs /prio/admin/item/*/edit
+    #
+    {
+        ok( my $response = request('http://localhost/prio/1/2/3/4'), 'priority - all args action (generic)' );
+        is( $response->header('X-Catalyst-Action'), '/action/chained/priority/generic', 'Executed the right action' );
+    }
+    {
+        ok( my $response = request('http://localhost/prio/admin/item/33/edit'), 'priority - only one args() (specific)' );
+        is( $response->header('X-Catalyst-Action'), '/action/chained/priority/specific', 'Executed the right action' );
+    }
+
+    #
     #   Test dispatching between two controllers that are on the same level and
     #   therefor have no parent/child relationship.
     #
